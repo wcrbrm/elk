@@ -1,0 +1,28 @@
+version: '3'
+services:
+  logspout:  
+    image: gliderlabs/logspout:v3
+    command: 'udp://logstash:5000'
+    links:
+      - logstash
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock'
+  kibana:
+    image: kibana:5.6.15
+    links:
+      - 'elastic:elasticsearch'
+    ports:
+      - '5601:5601'
+    environment:
+      - LOGSPOUT=ignore
+  logstash:  
+    image: logstash:5.6.15-alpine
+    command: 'logstash -e "input { udp { port => 5000 } } output { elasticsearch { hosts => elastic } }"'
+    links:
+      - elastic
+    environment:
+      - LOGSPOUT=ignore
+  elastic:
+    image: elasticsearch:5.6.15-alpine
+    environment:
+      - LOGSPOUT=ignore
