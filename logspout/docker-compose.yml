@@ -1,0 +1,7 @@
+version: '3'
+services:
+  logspout:  
+    image: gliderlabs/logspout:v3
+    command: 'udp://127.0.0.1:5600'
+    volumes:
+      - '/var/run/docker.sock:/tmp/docker.sock'
